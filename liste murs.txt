@@ -1,0 +1,15 @@
+19 angle haut gauche
+26 tunel horizontal
+21 tunel vertical
+25 angle bas gauche
+16 ok
+0 blanc impossible
+22 angle haut droit
+28 angle bas droit
+
+
+
+17 gauche impassable par la droite
+20 droite impassable par la gauche
+24 bas impassable par la haut
+18 haut impassable par le bas
