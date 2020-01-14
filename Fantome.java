@@ -101,7 +101,7 @@ public class Fantome {
 	}
 	
 	void reset() {
-		x=25*10;
+		x=25*9;
 		y=25*5;
 		enVie=true;
 	}

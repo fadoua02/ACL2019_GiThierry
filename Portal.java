@@ -2,8 +2,8 @@ import java.awt.Image;
 
 public class Portal {
 
-	public int x = 14*25;
-	public int y = 14*25;
+	public int x = 0;
+	public int y = 0;
 	public Image image_passage;
 	
 	public int getX() {

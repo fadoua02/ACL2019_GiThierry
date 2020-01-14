@@ -11,8 +11,8 @@ public class Monstre extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public int x=25;
-	public int y=25;
+	public int x=0;
+	public int y=0;
 	public Image image_monstre;
 	public int dx=0;
 	public int dy=0;
@@ -105,8 +105,8 @@ public class Monstre extends JPanel {
 	}
 	
 	void reset() {
-		x = 25*10;
-		y = 25*5;
+		x = 25*7;
+		y = 25*8;
 		enVie=true;
 	}
 }

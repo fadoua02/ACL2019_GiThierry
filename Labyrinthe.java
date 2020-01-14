@@ -23,23 +23,24 @@ public class Labyrinthe extends JPanel implements ActionListener{
 	Monstre m2 = new Monstre();
 	Monstre m3 = new Monstre();
 	Monstre m4 = new Monstre();
-	Passage p = new Passage();
+	Portal p = new Portal();
 	ArrayList<Monstre> Monstres = new ArrayList();
 	Boolean chargementVie = false;
 	static Boolean tir = false;
-	
+
 	Boolean chevre = true;
 	private boolean clef=false;
 	static Boolean play = false;
-	
+	static Boolean replay = false;
+
 	static int[] lab;
 
 	private void remplirListeMonstres() {
-			Monstres = new ArrayList();
-			Monstres.add(m1);
-			Monstres.add(m2);
-			Monstres.add(m3);
-			Monstres.add(m4);
+		Monstres = new ArrayList();
+		Monstres.add(m1);
+		Monstres.add(m2);
+		Monstres.add(m3);
+		Monstres.add(m4);
 	}
 
 	private void genererLabyrinthe(Graphics2D g2d,int map) {
@@ -70,7 +71,7 @@ public class Labyrinthe extends JPanel implements ActionListener{
 			g2d.setColor(Color.black);
 			try {
 				File intro = new File(adressedufichier + "ecranPrincipal.png");
-				g2d.drawImage(ImageIO.read(intro), 0, 0, 389, 450, null);
+				g2d.drawImage(ImageIO.read(intro), 0, 0, 388, 420, null);
 			} catch (IOException ie) {
 				System.out.println("Erreur :"+ie.getMessage());
 			}
@@ -86,15 +87,15 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		boolean attacked=false;
 		if (play==true){
 			for (int i=0; i<Monstres.size(); i++) {
-				if ((Monstres.get(i).x+25 == h.x && Monstres.get(i).y == h.y) 
-						|| (Monstres.get(i).x == h.x && Monstres.get(i).y == h.y)
-//						|| (Monstres.get(i).x == h.x && Monstres.get(i).y+25 == h.y)
-//						|| (Monstres.get(i).x == h.x && Monstres.get(i).y == h.y+25)
+				if ((Monstres.get(i).x == h.x && Monstres.get(i).y == h.y) 
+//						|| (Monstres.get(i).x+25 == h.x && Monstres.get(i).y == h.y)
+						//						|| (Monstres.get(i).x == h.x && Monstres.get(i).y+25 == h.y)
+						//						|| (Monstres.get(i).x == h.x && Monstres.get(i).y == h.y+25)
 						|| (f.x +25== h.x && f.y == h.y)
-//						|| (f.x == h.x+25 && f.y == h.y)
-//						|| (f.x == h.x && f.y+25 == h.y)
-//						|| (f.x == h.x && f.y == h.y+25)
-					 ) {
+						//						|| (f.x == h.x+25 && f.y == h.y)
+						//						|| (f.x == h.x && f.y+25 == h.y)
+						//						|| (f.x == h.x && f.y == h.y+25)
+						) {
 					attacked = true;
 					h.life--;
 				}
@@ -149,7 +150,7 @@ public class Labyrinthe extends JPanel implements ActionListener{
 
 			if (chevre==true) {
 				File input3 = new File(adressedufichier + "chevre.png");
-				g2d.drawImage(ImageIO.read(input3), 5, 12*25, 80,80, null);
+				g2d.drawImage(ImageIO.read(input3), 15, 12*27, 70,70, null);
 			}
 		} catch (IOException ie) {
 			System.out.println("Erreur :"+ie.getMessage());
@@ -159,7 +160,7 @@ public class Labyrinthe extends JPanel implements ActionListener{
 
 
 	public void chargerImageTresor(Graphics g2d) {
-		if (Principale.map==3) {
+		if (play==true) {
 			Tresor tresor = new Tresor();
 			String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
 			try {
@@ -172,18 +173,17 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		}
 	}
 
-	public void chargerImagePassage(Graphics g2d) {
-		if (h.life>0) {
-			if (Principale.map==1 || Principale.map==2) {
+	public void chargerImagePortal(Graphics g2d) {
+			if (play==true) {
 				String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
 				try {
 					File input = new File(adressedufichier + "portal.png");
 					p.image_passage=ImageIO.read(input);
-					g2d.drawImage(p.image_passage, p.x, p.y, 25, 25, null);
+					g2d.drawImage(p.image_passage, p.x+5*25, p.y+12*25, 25, 25, null);
+					g2d.drawImage(p.image_passage, p.x+10*25, p.y+25*2, 25, 25, null);
 				} catch (IOException ie) {
 					System.out.println("Erreur :"+ie.getMessage());
 				}
-			}
 		}
 	}
 
@@ -194,7 +194,6 @@ public class Labyrinthe extends JPanel implements ActionListener{
 				File input = new File(adressedufichier + "broccoli.png");
 				M.image_monstre = ImageIO.read(input);
 				g2d.drawImage(M.image_monstre, x, y, 25, 25, null);
-
 			} catch (IOException ie) {
 				System.out.println("Erreur :"+ie.getMessage());
 			}
@@ -217,33 +216,33 @@ public class Labyrinthe extends JPanel implements ActionListener{
 
 	public void GameOver(Graphics g2d) {
 		if (h.life<=0) {
+			replay=true;
+			play=false;
 			for (int i=0; i<Monstres.size(); i++) {
 				Monstres.get(i).enVie=false;
 			}
 			f.enVie=false;
 
-			//non utilisé pour l'instant on se contente de fermer la fenêtre
 			String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
 			try {
-
 				File input1 = new File(adressedufichier + "gameover.png");
-				g2d.drawImage(ImageIO.read(input1), 0, 0, 400, 450, null);
+				g2d.drawImage(ImageIO.read(input1), 0, 0, 388, 420, null);
 
 			} catch (IOException ie) {
 				System.out.println("Erreur :"+ie.getMessage());
 			}
-			timer.stop();
-
 		}
 	}
 
 	public void PartieGagnee(Graphics g2d) {
-		if (h.x == 350 && h.y == 350 && Principale.map==3) {
+		if (h.x == 350 && h.y == 350 && clef==true) {
+			play=false;
+			replay=true;
 			String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
 			try {
 
 				File input2 = new File(adressedufichier + "win.png");
-				g2d.drawImage(ImageIO.read(input2), 0, 0, 389, 450, null);
+				g2d.drawImage(ImageIO.read(input2), 0, 0, 388, 420, null);
 
 			} catch (IOException ie) {
 				System.out.println("Erreur :"+ie.getMessage());
@@ -259,7 +258,7 @@ public class Labyrinthe extends JPanel implements ActionListener{
 	}
 
 	public void deplacementMonstres(Graphics g2d) {
-		remplirListeMonstres(); // A CHANGER LE JOUEUR DOIT POUVOIR CHOISIR LE NIVEAU QUIL VEUT
+		remplirListeMonstres(); 
 		for (int i=0; i<Monstres.size(); i++) {
 			if (Monstres.get(i).enVie == true) {
 				deplacementMonstre(g2d,Monstres.get(i));
@@ -276,17 +275,14 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		}
 	}
 
-	public void passageMapSuivante(Graphics g2d) {
-		if (Principale.map!=3) {
-			if (h.x == p.x && h.y == p.y ) {
-				h.reset();
-				for (Monstre m : Monstres) {
-					m.reset();
-				}
-				f.reset();
-				Principale.map++;
-				chevre=true;
-			}
+	public void passagePortal(Graphics g2d) {
+			if (h.x == p.x+5*25 && h.y == p.y+12*25 ) {
+				h.setX(11*25);
+				h.setY(25*2);
+		}
+			if (h.x == p.x+10*25 && h.y == p.y+2*25 ) {
+				h.setX(4*25);
+				h.setY(25*12);
 		}
 	}
 
@@ -299,12 +295,10 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		System.out.println("coucou");
 	}
 
-	public void perteViePiege(Graphics g2d) {
-		if (chevre==true) {
-			if ((Principale.map==1 && h.x==0 && h.y==14*25) || (Principale.map==3 && h.x==0 && h.y==14*25) || (Principale.map==2 && h.x==14*25 && h.y==0)) {
-				h.life--;
-				chevre=false;
-			}
+	public void clef(Graphics g2d) {
+		if ((h.x==25 ||h.x==50) && h.y==13*25) {
+			chevre=false;
+			clef=true;
 		}
 	}
 
@@ -343,12 +337,10 @@ public class Labyrinthe extends JPanel implements ActionListener{
 
 	public void trace(Graphics g) {
 		setBackground(new Color(0,0,0));
-		//timer = new Timer(30, (ActionListener) this);
 		timer.start();
 		Graphics2D g2d = (Graphics2D) g;
 		g.setColor(Color.white);
 		g.fillRect(0,0,17*25,17*25);
-		//GameOver(g2d);
 		chargerImage(g2d,h.getX(),h.getY());
 		genererLabyrinthe(g2d,Principale.map);
 		GameOver(g2d);
@@ -357,9 +349,9 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		life(g2d);
 		tueMonstre(g2d);
 		chargerImageTresor(g2d);
-		perteViePiege(g2d);
-		passageMapSuivante(g2d);
-		chargerImagePassage(g2d);
+		clef(g2d);
+		passagePortal(g2d);
+		chargerImagePortal(g2d);
 		PartieGagnee(g2d);
 
 		repaint();
@@ -372,6 +364,5 @@ public class Labyrinthe extends JPanel implements ActionListener{
 		h.move2();
 		repaint();
 	}
-
 
 }
