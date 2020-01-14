@@ -20,17 +20,24 @@ public class keyPressed implements KeyListener {
 		case KeyEvent.VK_DOWN: 
 			Heros.dy=-1;
 			break;
-		
+
 		case KeyEvent.VK_SPACE:
 			if (Labyrinthe.play==false) {
 				Labyrinthe.play=true;
 				Principale.level=1;
 			}
-			if (Principale.map ==1) {
+			if (Labyrinthe.play==true) {
 				Labyrinthe.tir = true;
+			}
+			if (Labyrinthe.replay=true) {
+				Labyrinthe.play=true;
+				Principale.level=1;
 			}
 			break;
 		}
+		
+
+
 	}
 
 	@Override
