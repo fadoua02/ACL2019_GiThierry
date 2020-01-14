@@ -1,0 +1,271 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.*;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
+import javax.swing.Timer;
+public class Labyrinthe extends JPanel implements ActionListener{
+
+	private int longueur = 25;
+	private int nombre_carre = 15;
+	private int taille_fenetre = nombre_carre * longueur;
+	private Timer timer;
+	private Color black = new Color(0, 0, 0);
+	private boolean clef=false;
+
+	String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
+	File input_bonus = new File(adressedufichier +"chevre.png");
+	boolean chevre = true;
+
+
+	Heros h = new Heros();
+	Fantome f = new Fantome();
+	Monstre m1 = new Monstre();
+	Monstre m2 = new Monstre();
+	Monstre m3 = new Monstre();
+	Monstre m4 = new Monstre();
+	Monstre m5 = new Monstre();
+
+
+	static int lab[] = {
+			19, 18, 22, 18, 18, 18, 18, 18, 18, 18, 19, 18, 18, 18, 22,
+			25, 24, 20, 0, 0, 0, 19, 18, 18, 26, 0, 0, 0, 0, 20,
+			17, 0, 17, 22, 0, 0, 17, 0, 20, 0, 25, 24, 0, 0, 24,
+			17, 0, 17, 0, 18, 18, 0, 24, 28, 0, 0, 0, 17, 20, 20,
+			17, 0, 25, 24, 0, 0, 20, 0, 0, 0, 0, 0, 17, 20, 20,
+			17, 0, 0, 0, 17, 0, 24, 26, 26, 22, 0, 19, 24, 28, 20,
+			17, 0, 0, 0, 17, 20, 0, 0, 0, 21, 0, 21, 0, 0, 20,
+			17, 0, 0, 0, 17, 20, 0, 0, 0, 21, 0, 21, 0, 0, 20,
+			17, 0, 0, 0, 17, 0, 18, 18, 18, 20, 17, 17, 18, 22, 20,
+			17, 0, 19, 18, 0, 0, 24, 24, 24, 20, 0, 17, 0, 20, 20,
+			19, 18, 0, 0, 0, 20, 0, 0, 0, 17, 18, 0, 0, 20, 20,
+			17, 0, 0, 0, 0, 20, 0, 0, 0, 25, 0, 0, 0, 0, 22,
+			17, 0, 0, 24, 24, 28, 0, 0, 0, 0, 17, 0, 0, 0, 20,
+			17, 0, 20, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 20,
+			25, 24, 28, 24, 24, 24, 24, 24, 24, 24, 25, 24, 24, 24, 28,
+	};
+
+	private void genererLabyrinthe(Graphics2D g2d) {
+		g2d.setColor(black);
+		int i = 0;
+		for (int y = 0; y < taille_fenetre; y += longueur) {
+			for (int x = 0; x < taille_fenetre; x += longueur) {
+				if ((lab[i] & 1) != 0) { 
+					g2d.drawLine(x,y,x,y+longueur-1);
+				}
+				if ((lab[i] & 2) != 0) { 
+					g2d.drawLine(x,y,x+longueur-1,y);
+				}
+				if ((lab[i] & 4) != 0) { 
+					g2d.drawLine(x+longueur-1,y,x+longueur-1,y+longueur-1);
+				}
+				if ((lab[i] & 8) != 0) { 
+					g2d.drawLine(x, y+longueur-1,x+longueur-1,y+longueur-1);
+				}
+				//				if ((lab[i] & 16) != 0) { // voir si on met des points à gagner plus tard
+				//					g2d.fillRect(x + 11, y + 11, 2, 2);
+				//				}
+
+				i++;
+			}
+		}
+	}
+
+	public void chargerImage(Graphics2D g2d,int dxx, int dyy) {
+
+		String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
+
+		try {
+			File input_bg = new File(adressedufichier + "space.jpg");
+			g2d.drawImage(ImageIO.read(input_bg),0*0,0*0,380,420, null);
+
+			//ici seront définis les murs
+			File input_g1 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_g1), 0, 2*25-1, 2*25, 8*25+1, null);
+			File input_g2 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_g2), 2*25, 5*25-1, 2*25, 4*25+1, null);
+
+			File input_h1 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_h1), 3*25-1, 0, 7*25+1, 25, null);
+			File input_h2 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_h2), 3*25-1, 25-1, 3*25+1, 25+1, null);
+			File input_h3 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_h3), 4*25, 2*25-1, 2*25, 25+1, null);
+
+			File input_b1 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_b1), 6*25, 10*25-1,3*25, 2*25+1, null);
+			File input_b2 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_b2), 6*25, 12*25-1, 4*25, 25+1, null);
+			File input_b3 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_b3), 3*25-1, 13*25, 7*25+1, 2*25-1, null);
+
+			File input_d1 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_d1), 14*25, 3*25, 25, 8*25, null);
+			File input_d2 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_d2), 12*25, 6*25-1, 2*25, 2*25+1, null);
+
+			File input_m = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_m), 6*25, 6*25-1, 3*25, 2*25+1, null);
+
+			File input_m1 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_m1), 9*25-1, 2*25-1, 25+1, 25+1, null);
+			File input_m2 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_m2), 9*25-1, 3*25-1, 3*25+1, 25+1, null);
+			File input_m3 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_m3), 7*25-1, 4*25-1, 5*25+1, 25+1, null);
+			File input_m4 = new File(adressedufichier +"murs.png");
+			g2d.drawImage(ImageIO.read(input_m4), 10*25-1, 5*25-1, 25+1, 5*25+1, null);
+
+			//ici seront définis tout autre élément
+
+			File input_portal = new File(adressedufichier +"portal.png");
+			g2d.drawImage(ImageIO.read(input_portal), 10*25, 2*25, 25, 25 , null);
+			File input_portal2 = new File(adressedufichier +"portal.png");
+			g2d.drawImage(ImageIO.read(input_portal2), 5*25, 12*25, 25, 25, null);
+
+			if (chevre==true) {
+				g2d.drawImage(ImageIO.read(input_bonus), 0, 12*25, 90, 90, null);
+			}
+
+
+			File input_heros = new File(adressedufichier + "taco.png");
+			h.image_heros = ImageIO.read(input_heros);
+			g2d.drawImage(h.image_heros, dxx, dyy, 25, 25,null);
+
+			File input_fantome = new File(adressedufichier + "ghost.png");
+			f.image_ghost = ImageIO.read(input_fantome);
+			g2d.drawImage(f.image_ghost, f.getX(), f.getY(), 25, 25, null);
+
+			File input_monstre1 = new File(adressedufichier + "broccoli.png");
+			m1.image_monstre = ImageIO.read(input_monstre1);
+			g2d.drawImage(m1.image_monstre, m1.getX()+300,m1.getY()+25, 25, 25, null);
+			File input_monstre2 = new File(adressedufichier + "broccoli.png");
+			m2.image_monstre = ImageIO.read(input_monstre2);
+			g2d.drawImage(m2.image_monstre, m2.getX()+300,m2.getY()+ 250, 25, 25, null);
+			File input_monstre3 = new File(adressedufichier + "broccoli.png");
+			m3.image_monstre = ImageIO.read(input_monstre3);
+			g2d.drawImage(m3.image_monstre, m3.getX()+75, m3.getY()+275, 25, 25, null);
+			File input_monstre4 = new File(adressedufichier + "broccoli.png");
+			m4.image_monstre = ImageIO.read(input_monstre4);
+			g2d.drawImage(m4.image_monstre, m4.getX()+125,m4.getY()+ 125, 25, 25, null);
+
+			File input_tresor = new File(adressedufichier + "frites.png"); //plus tard creer une classe tresor
+			g2d.drawImage(ImageIO.read(input_tresor), 13*25, 13*25, 35, 35, null);
+
+		} 
+		catch (IOException ie) {
+			System.out.println("Erreur :"+ie.getMessage());
+		}
+
+	}
+
+	public void GameOver(Graphics g2d) { //non utilisé pour l'instant on se contente de fermer la fenêtre
+		String adressedufichier = System.getProperty("user.dir") + "/" + "Ressources" + "/";
+		try {
+
+			File input1 = new File(adressedufichier + "gameover.png");
+			g2d.drawImage(ImageIO.read(input1), 15*25/2, 15*25/2, 400, 420, null);
+
+		} catch (IOException ie) {
+			System.out.println("Erreur :"+ie.getMessage());
+		}
+	}
+	public void paintComponent(Graphics g) {
+		setBackground(new Color(255,255,255));
+		super.paintComponent(g);
+		timer = new Timer(2, (ActionListener) this);
+		timer.start();
+		m1.move();				//déplacer
+		m2.move();
+		m3.move();
+		m4.move();
+		f.move();
+
+		Graphics2D g2d = (Graphics2D) g;
+		chargerImage(g2d,h.getX(),h.getY());
+		genererLabyrinthe(g2d);
+		repaint();
+		g.dispose();
+
+//		if ((h.x+27 == f.x || h.x == f.x+27) && h.y==f.y			//horizontal
+//				|| (h.y+27 == f.y || h.y == f.y+27 ) && h.x==f.x) {		//vertical
+//			GameOver(g2d);
+//			repaint();
+//			setVisible(false);
+//			System.out.println("GAME OVER");
+//		}
+		
+//		if (h.x<f.x && h.x+25>f.x && h.y<f.y+25 && h.y>f.y {
+//			GameOver(g2d);
+//			repaint();
+//			setVisible(false);
+//			System.out.println("GAME OVER");
+//		}
+		//Collisions fantome
+		if (f.y>325) {
+			f.setY(f.y-25);
+		}
+		if (f.y<0) {
+			f.setY(f.y+25);
+		}
+		if (f.x<0) {
+			f.setX(f.x+25);
+		}
+		if (f.x>325) {
+			f.setX(f.x-25);
+		}
+		
+		if (h.x == 25 && h.y == 325 || h.x == 50 && h.y == 325 ) {
+			this.clef=true;
+			this.chevre=false;
+			repaint();
+		}
+		//		
+
+		if ((h.x == 325 && h.y == 325 || h.x == 350 && h.y == 325 || h.x == 325 && h.y == 350) && clef==true) {  //zone pour gagner
+			System.out.println("BRAVO VOUS AVEZ TROUVE LE TRESOR");
+			repaint();
+			setVisible(false);
+		}
+
+		if (h.x==125 && h.y==300) {			//portails
+			h.setX(275);
+			h.setY(50);
+		}
+
+		if (h.x==250 && h.y==50) {			//portails
+			h.setX(100);
+			h.setY(300);
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		int pos = h.x/25+15*(int)h.y/25;
+		int pos_ = lab[pos];
+		if (h.dx==-1 && h.dy==0 && (pos_ & 1) != 0 || h.dx==1 && h.dy==0 && (pos_ & 4) != 0 ||
+				h.dx==0 && h.dy==-1 && (pos_ & 8) != 0 || h.dx==0 && h.dy==1 && (pos_ & 2) != 0 ) {
+			h.dx=0;
+			h.dy=0;
+		}
+		else {
+			h.move();
+			h.dx=0;
+			h.dy=0;
+		}
+
+		//		System.out.println(h.x);
+		//		System.out.println(h.y);
+		//System.out.println(clef);
+		//System.out.println(chevre);
+	}
+}
